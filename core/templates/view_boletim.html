@@ -1,0 +1,38 @@
+{% load static %}
+
+{% include 'parciais/head.html' %}
+
+<body>
+    {% include 'parciais/navbar.html'%}
+    <div class="container">
+        <div class="card mt-4">
+
+            <div class="card-header bg-default">
+
+                <div class="d-flex justify-content-between ">
+                    <h3 class="card-title">{{ ato.tipo_ato|upper }} / NUMERO {{ ato.numero }}</h3>
+                    
+                    <div class="d-flex gap-3  ">
+                            <a href="{% url 'editar_boletim' ato_ids=boletim.portarias_fks %}" target="_blank" class="bg-light p-2 text-reset rounded ">
+                                <i class="bi bi-pencil-square fa-2x"></i>
+                            </a>
+                            <a href="{% url 'gerar_boletim' ato_ids=boletim.portarias_fks boletim_id=boletim.id %}" target="_blank" class="bg-light p-2 text-reset  rounded  ">
+                                <i class="bi bi-download fa-2x"></i>
+                            </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="tab-content bg-red-500">
+                    <h2>{{boletim.data_criacao}}</h2>
+                    <p>{{boletim.conteudo_pdf}}</p>
+                    <h3>{{boletim.status}}</h3>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% include 'parciais/footer.html'%}
+
+</body>

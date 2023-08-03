@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <title>Editor</title>
+  {% include 'parciais/head.html'%}
+</head>
+
+{% include 'parciais/navbar.html'%}
+
+
+<form method="post" class="m-3">
+      <div class="container ">
+      
+        <div class="row">
+      {% csrf_token %}
+      <div class="form-group col-md-12">
+        <label for="conteudo_pdf titulo">Conteudo PDF</label>
+        <textarea class="form-control" rows="9" id="conteudo_pdf" name="conteudo_pdf">{{ ato.conteudo_pdf|safe }}</textarea>
+      </div>
+      <div class="form-group col-md-12">
+        <label for="titulo">Ementa</label>
+        <h1   class="form-control"  rows="7" id="titulo" name="titulo" >{{ ato.titulo }}</h1>
+      </div>
+      
+      
+      <div class="form-group col-md-3">
+        <label for="status">Status</label>
+        <select class="form-control" id="status" name="status">
+          {% for choice in ato.STATUS_CHOICES %}
+            {% if choice.0 == ato.status %}
+              <option value="{{ ato.status }}" selected>{{ ato.status }}</option>
+            {% else %}
+              <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary m-2">Atualizar</button>
+      <!-- <input type="submit" name="aprovar_ato" value="Aprovar Ato"> -->
+    </div>
+  </div>
+</form>
+
+{% include 'parciais/footer.html'%}

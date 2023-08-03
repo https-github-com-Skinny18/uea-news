@@ -1,0 +1,117 @@
+{% load static %}
+
+{% include 'parciais/head.html' %}
+
+<body>
+    {% include 'parciais/navbar.html'%}
+    <form id="form_pesquisa" class="p-3 w-100 d-flex justify-content-end form-inline caixa_de_pesquisa">
+        <div>
+            <input class="form-control mr-sm-2" id="filter" type="search" name="pesquisar" placeholder="Pesquisar">
+        </div>
+
+        <div>
+            <select class="form-control cor_texto_pesquisar " name="ano">
+                <option value="">Selecione um ano</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+                <option value="2000">2000</option>
+            </select>
+        </div>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Pesquisar</button>
+    </form>
+
+    {% regroup boletim|dictsort:'data_criacao' by data_criacao|date:'Y' as atos_by_year %}
+    {% for atos_group in atos_by_year %}
+    <div class="mb-2">
+        <button class="mb-2 btn-boletim w-100 text-dark text-right border border-white btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapse0{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse0{{ forloop.counter }}">
+        BOLETIM - {{ atos_group.grouper }}
+        </button>
+    </div>
+    <div class="collapse" id="collapse0{{ forloop.counter }}">
+        {% for ato in atos_group.list %}
+            <div class="mb-2 card card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'gerar_boletim' ato_ids=ato.portarias_fks boletim_id=ato.id %}" class="card-title text-decoration-none">
+                <h5 class="card-title">{{ato.id}} - {{ ato.titulo|upper }}</h5>
+                <p class="card-text">{{ ato.conteudo_pdf|truncatechars:100}}</p>
+                </a>
+                                       
+            </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    {% regroup resolucao|dictsort:'doe_data' by doe_data|date:'Y' as atos_by_year %}
+    {% for atos_group in atos_by_year %}
+    <div class="mb-2">
+        <button class="mb-2 btn-boletim w-100 text-dark text-right border border-white btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse1{{ forloop.counter }}">
+        RESOLUÇÃO - {{ atos_group.grouper }}
+        </button>
+    </div>
+    <div class="collapse" id="collapse1{{ forloop.counter }}">
+        {% for ato in atos_group.list %}
+            <div class="mb-2 card card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'view' ato.id %}" class="card-title text-decoration-none">
+                <h5 class="card-title">{{ ato.tipo_ato|upper }} - N°{{ato.doe_numero}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ ato.assinante1 }} / {{ ato.autoridade1 }} / {{ ato.dt_cadastro }}</h6>
+                <p class="card-text">{{ ato.ementa|truncatechars:100}}</p>
+                </a>
+            </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+
+    {% regroup portaria|dictsort:'doe_data' by doe_data|date:'Y' as atos_by_year %}
+    {% for atos_group in atos_by_year %}
+    <div class="mb-2">
+        <button class="mb-2 btn-boletim w-100 text-dark text-right border border-white btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+        PORTARIA - {{ atos_group.grouper }}
+        </button>
+    </div>
+    <div class="collapse" id="collapse{{ forloop.counter }}">
+        {% for ato in atos_group.list %}
+            <div class="mb-2 card card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'view' ato.id %}" class="card-title text-decoration-none">
+                <h5 class="card-title">{{ ato.tipo_ato|upper }} - N°{{ato.doe_numero}}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ ato.assinante1 }} / {{ ato.autoridade1 }} / {{ ato.dt_cadastro }}</h6>
+                <p class="card-text">{{ ato.ementa|truncatechars:100}}</p>
+                </a>
+            </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    
+    {% include 'parciais/footer.html'%}
+<script>
+    const filterElement = document.querySelector('#filter')
+    const cards = document.querySelectorAll('.card.card-body')
+
+    filterElement.addEventListener('input', filterCards);
+
+    function filterCards() {
+        if (filterElement.value != '') {
+            for (let card of cards) {
+                let title = card.querySelector('h5').textContent.toLowerCase();
+                let description = card.querySelector('p').textContent.toLowerCase();
+                let filterText = filterElement.value.toLowerCase();
+                if (!(title.includes(filterText) || description.includes(filterText))) { // modificação
+                    card.style.display = "none";
+                } else {
+                    card.style.display = "block";
+                }
+            }
+        } else {
+            for (let card of cards) {
+                card.style.display = "block";
+            }
+        }
+    }
+</script>    
+</body>
